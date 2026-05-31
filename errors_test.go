@@ -20,3 +20,9 @@ func TestRequestErrorRedactsAPIKey(t *testing.T) {
 	require.NotContains(t, err.Error(), "super-secret")
 	require.Contains(t, err.Error(), "[REDACTED]")
 }
+
+func TestRequestErrorMessageWithoutEndpoint(t *testing.T) {
+	err := (&RequestError{Op: "GET", Endpoint: "GET", Err: "connection refused"}).Error()
+
+	require.Equal(t, "ecos: request GET: connection refused", err)
+}

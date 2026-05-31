@@ -2,7 +2,7 @@
 
 `ecos`는 한국은행 경제통계시스템(ECOS) OpenAPI를 위한 독립 Go 클라이언트 라이브러리입니다.
 
-초기 목표는 SDK core를 작게 유지하면서 공식 ECOS API 목록, 요청 파라미터, 응답 필드를 새로 수집해 typed method로 확장하는 것입니다. OpenDART나 mwosa의 생성 산출물은 복사하지 않고, 문서화와 생성 흐름만 참고합니다.
+SDK core를 작게 유지하면서 한국은행 ECOS 공식 OpenAPI 6개 서비스를 typed method로 제공합니다. OpenDART나 mwosa의 생성 산출물은 복사하지 않고, repo-local 문서에 기록한 ECOS API 조사 결과를 기준으로 구현합니다.
 
 ## 설치
 
@@ -16,6 +16,7 @@ go get github.com/awuzag/ecos
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
@@ -30,7 +31,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_ = client
+	result, err := client.Search(context.Background(), ecos.SearchRequest{
+		Page:      ecos.NewPage(1, 10),
+		StatCode:  ecos.StatCodeBankOfKoreaBaseRate,
+		Cycle:     ecos.CycleMonthly,
+		StartTime: "202001",
+		EndTime:   "202604",
+		ItemCodes: []ecos.ItemCode{ecos.ItemCodeBankOfKoreaBaseRate},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, row := range result.Rows {
+		log.Printf("%s %s", row.Time, row.Value)
+	}
 }
 ```
 
@@ -44,22 +59,36 @@ export ECOS_API_KEY="발급받은_인증키"
 
 ## 지원 범위
 
-현재 저장소는 다음 초기 뼈대를 포함합니다.
+현재 저장소는 다음 범위를 포함합니다.
 
 - root package `github.com/awuzag/ecos`
 - `New(Config, ...Option)` 기반 client 생성
 - `WithBaseURL`, `WithHTTPClient`, `WithTimeout` option
 - ECOS path-style API 호출을 위한 내부 JSON request helper
 - HTTP error, JSON decode error, ECOS business error 구분
-- API 문서 수집과 typed SDK 구현을 위한 `docs/apis/` 템플릿
+- 공식 ECOS OpenAPI 6개 서비스 typed method
+- `Cycle`, `Lang`, `Format`, `MessageCode`, `StatCode`, `ItemCode` typed const
+- fake server 기반 기본 테스트와 `e2e` build tag 기반 live smoke 테스트
 
-공식 API 목록과 typed method는 새로 수집한 문서를 기준으로 추가합니다.
+## API
+
+| ECOS service | SDK method | 비고 |
+| --- | --- | --- |
+| `StatisticTableList` | `Tables` | 통계표 목록과 조회 가능 여부 |
+| `StatisticItemList` | `Items` | 통계표별 항목, 주기, 제공 기간 |
+| `StatisticSearch` | `Search` | 통계 시계열 조회 |
+| `KeyStatisticList` | `KeyStatistics` | 주요 지표 최신값 |
+| `StatisticMeta` | `Meta` | 통계 메타데이터 |
+| `StatisticWord` | `Words` | 통계용어사전 |
+
+`KeyStatistic.CYCLE` provider 필드는 SDK에서 `ReferenceTime`으로 노출합니다. 이 값은 주기 코드가 아니라 최신값 기준시점입니다.
 
 ## 개발
 
 ```sh
 go mod tidy
 go test ./...
+go test -cover ./...
 git diff --check
 ```
 
@@ -71,6 +100,17 @@ go vet ./...
 ```
 
 기본 테스트는 live ECOS 호출을 하지 않습니다. 실제 ECOS 서버를 호출하는 e2e smoke는 별도 build tag와 `ECOS_API_KEY` 기반 optional workflow로 분리합니다.
+
+```sh
+go test -tags=e2e ./...
+```
+
+`Taskfile.yml`을 쓰면 로컬과 Docker 기반 검증을 같은 이름으로 실행할 수 있습니다.
+
+```sh
+task verify
+task docker:verify
+```
 
 ## 문서
 

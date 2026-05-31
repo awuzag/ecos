@@ -31,12 +31,12 @@
 
 | Service | 용도 | 필수 segment | 응답 root | SDK method |
 | --- | --- | --- | --- | --- |
-| `StatisticTableList` | 통계표 목록 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{stat_code?}` | `StatisticTableList` | 미정 |
-| `StatisticItemList` | 통계항목 목록 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{stat_code}` | `StatisticItemList` | 미정 |
-| `StatisticSearch` | 통계 조회 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{stat_code}/{cycle}/{start_time}/{end_time}/{item_code1}/{item_code2}/{item_code3}/{item_code4}` | `StatisticSearch` | 미정 |
-| `KeyStatisticList` | 주요 통계지표 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}` | `KeyStatisticList` | 미정 |
-| `StatisticMeta` | 통계 메타데이터 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{data_name}` | `StatisticMeta` | 미정 |
-| `StatisticWord` | 통계용어사전 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{word}` | `StatisticWord` | 미정 |
+| `StatisticTableList` | 통계표 목록 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{stat_code?}` | `StatisticTableList` | `Tables` |
+| `StatisticItemList` | 통계항목 목록 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{stat_code}` | `StatisticItemList` | `Items` |
+| `StatisticSearch` | 통계 조회 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{stat_code}/{cycle}/{start_time}/{end_time}/{item_code1}/{item_code2}/{item_code3}/{item_code4}` | `StatisticSearch` | `Search` |
+| `KeyStatisticList` | 주요 통계지표 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}` | `KeyStatisticList` | `KeyStatistics` |
+| `StatisticMeta` | 통계 메타데이터 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{data_name}` | `StatisticMeta` | `Meta` |
+| `StatisticWord` | 통계용어사전 | `{service}/{apiKey}/{format}/{lang}/{start}/{end}/{word}` | `StatisticWord` | `Words` |
 
 ## 서비스별 응답 필드
 

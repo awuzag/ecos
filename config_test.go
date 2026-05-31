@@ -1,7 +1,9 @@
 package ecos
 
 import (
+	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -19,4 +21,20 @@ func TestNewTrimsBaseURLTrailingSlash(t *testing.T) {
 
 	require.NoError(t, err)
 	require.Equal(t, "https://example.test/api", client.resty.BaseURL)
+}
+
+func TestNewAppliesHTTPClient(t *testing.T) {
+	httpClient := &http.Client{Timeout: 2 * time.Second}
+
+	client, err := New(Config{APIKey: "secret"}, WithHTTPClient(httpClient))
+
+	require.NoError(t, err)
+	require.Same(t, httpClient, client.resty.GetClient())
+}
+
+func TestNewAppliesTimeout(t *testing.T) {
+	client, err := New(Config{APIKey: "secret"}, WithTimeout(3*time.Second))
+
+	require.NoError(t, err)
+	require.Equal(t, 3*time.Second, client.resty.GetClient().Timeout)
 }

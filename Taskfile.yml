@@ -1,0 +1,57 @@
+version: "3"
+
+vars:
+  GO_IMAGE: golang:1.26.3
+
+tasks:
+  tidy:
+    cmds:
+      - go mod tidy
+
+  test:
+    cmds:
+      - go test ./...
+
+  coverage:
+    cmds:
+      - go test -cover ./...
+
+  race:
+    cmds:
+      - go test -race ./...
+
+  vet:
+    cmds:
+      - go vet ./...
+
+  diff-check:
+    cmds:
+      - git diff --check
+
+  verify:
+    cmds:
+      - go mod tidy
+      - go test ./...
+      - go test -cover ./...
+      - go vet ./...
+      - git diff --check
+
+  e2e:
+    cmds:
+      - go test -tags=e2e ./...
+
+  docker:test:
+    cmds:
+      - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go test ./...
+
+  docker:coverage:
+    cmds:
+      - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go test -cover ./...
+
+  docker:verify:
+    cmds:
+      - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go mod tidy
+      - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go test ./...
+      - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go test -cover ./...
+      - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go vet ./...
+      - git diff --check

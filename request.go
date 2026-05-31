@@ -13,26 +13,35 @@ const (
 )
 
 func getJSON(ctx context.Context, client *Client, service string, pathSegments []string, out any) error {
+	body, _, err := getRawJSON(ctx, client, service, pathSegments)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(body, out); err != nil {
+		endpoint := buildEndpoint(service, client.apiKey, defaultFormat, defaultLang, pathSegments...)
+		return decodeError("GET", redactSecret(endpoint, client.apiKey), service, defaultFormat, err)
+	}
+	return nil
+}
+
+func getRawJSON(ctx context.Context, client *Client, service string, pathSegments []string) ([]byte, string, error) {
 	endpoint := buildEndpoint(service, client.apiKey, defaultFormat, defaultLang, pathSegments...)
 	safeEndpoint := redactSecret(endpoint, client.apiKey)
 	resp, err := client.resty.R().
 		SetContext(ctx).
 		Get(endpoint)
 	if err != nil {
-		return requestError("GET", endpoint, service, err, client.apiKey)
+		return nil, safeEndpoint, requestError("GET", endpoint, service, err, client.apiKey)
 	}
 	if err := checkHTTP(resp, "GET", safeEndpoint, service); err != nil {
-		return err
+		return nil, safeEndpoint, err
 	}
 
 	body := resp.Body()
 	if err := decodeBusinessError(body, "GET", safeEndpoint, service); err != nil {
-		return err
+		return nil, safeEndpoint, err
 	}
-	if err := json.Unmarshal(body, out); err != nil {
-		return decodeError("GET", safeEndpoint, service, "json", err)
-	}
-	return nil
+	return body, safeEndpoint, nil
 }
 
 func buildEndpoint(service string, apiKey string, format string, lang string, pathSegments ...string) string {
