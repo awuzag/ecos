@@ -1,6 +1,6 @@
 # OpenAPI 수집 계획
 
-- 확인 날짜: 미수집
+- 확인 날짜: 2026-05-31
 - 루트 산출물: `docs/apis/ecos.openapi.json`
 - 번들 산출물: `docs/apis/ecos.openapi.bundle.json`
 - API별 산출물: `docs/apis/openapi/apis/*.json`
@@ -9,9 +9,9 @@
 
 ## 수집 범위
 
-한국은행 ECOS OpenAPI 공식 문서에서 제공하는 전체 service를 수집한다. 수집 전에는 코드 생성물이나 OpenDART/mwosa 전용 API 산출물을 복사하지 않는다.
+한국은행 ECOS OpenAPI 공식 문서에서 제공하는 전체 service를 수집한다. 코드 생성물이나 OpenDART/mwosa 전용 API 산출물은 복사하지 않는다.
 
-초기 조사 대상:
+조사 대상:
 
 - `StatisticTableList`
 - `StatisticWord`
