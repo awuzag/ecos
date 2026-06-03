@@ -40,6 +40,10 @@ tasks:
     cmds:
       - go test -tags=e2e ./...
 
+  cli:smoke:
+    cmds:
+      - go run ./cmd/ecos show key-statistics --start 1 --end 5 --json
+
   docker:test:
     cmds:
       - docker run --rm -v "{{.ROOT_DIR}}:/work" -w /work {{.GO_IMAGE}} go test ./...

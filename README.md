@@ -57,6 +57,14 @@ ECOS 인증키는 코드에 직접 쓰지 말고 환경변수로 주입합니다
 export ECOS_API_KEY="발급받은_인증키"
 ```
 
+CLI는 인증키를 `--api-key`, `ECOS_API_KEY`, repo-local `.env` 순서로 읽습니다. 인증키 값은 출력하지 않습니다.
+
+repo-local `.env`를 사용할 때는 다음처럼 환경변수 이름만 둡니다.
+
+```sh
+ECOS_API_KEY=발급받은_인증키
+```
+
 ## 지원 범위
 
 현재 저장소는 다음 범위를 포함합니다.
@@ -68,7 +76,36 @@ export ECOS_API_KEY="발급받은_인증키"
 - HTTP error, JSON decode error, ECOS business error 구분
 - 공식 ECOS OpenAPI 6개 서비스 typed method
 - `Cycle`, `Lang`, `Format`, `MessageCode`, `StatCode`, `ItemCode` typed const
+- Cobra 기반 `cmd/ecos` CLI
 - fake server 기반 기본 테스트와 `e2e` build tag 기반 live smoke 테스트
+
+## CLI
+
+개발 체크아웃에서는 `go run`으로 바로 실행할 수 있습니다.
+
+```sh
+go run ./cmd/ecos show key-statistics --start 1 --end 5
+go run ./cmd/ecos show key-statistics --start 1 --end 5 --json
+```
+
+설치해서 쓰려면 태그 기준으로 `cmd/ecos`를 설치합니다.
+
+```sh
+go install github.com/awuzag/ecos/cmd/ecos@latest
+```
+
+명령 이름은 verb first 형태를 사용합니다.
+
+```sh
+ecos list tables --start 1 --end 20
+ecos list items --stat-code 722Y001 --start 1 --end 20
+ecos search observations --stat-code 722Y001 --cycle M --time-start 202001 --time-end 202604 --item-code 0101000
+ecos show key-statistics --start 1 --end 5 --json
+ecos show word 소비자동향지수
+ecos show meta 경제심리지수
+```
+
+공통 옵션은 `--api-key`, `--env-file`, `--base-url`, `--start`, `--end`, `--json`입니다. `--start`와 `--end`는 ECOS path-style row 범위이고, `search observations`의 기간은 `--time-start`, `--time-end`로 지정합니다.
 
 ## API
 
