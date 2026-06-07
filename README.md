@@ -112,13 +112,13 @@ ecos show meta 경제심리지수
 | ECOS service | SDK method | 비고 |
 | --- | --- | --- |
 | `StatisticTableList` | `Tables` | 통계표 목록과 조회 가능 여부 |
-| `StatisticItemList` | `Items` | 통계표별 항목, 주기, 제공 기간 |
+| `StatisticItemList` | `Items` | 통계표별 항목, 주기, 제공 기간. catalog에서는 targeted drill-down 검증용 |
 | `StatisticSearch` | `Search` | 통계 시계열 조회 |
-| `KeyStatisticList` | `KeyStatistics` | 주요 지표 최신값 |
+| `KeyStatisticList` | `KeyStatistics` | 100대 주요 지표 최신값 상태판 |
 | `StatisticMeta` | `Meta` | 통계 메타데이터 |
 | `StatisticWord` | `Words` | 통계용어사전 |
 
-`KeyStatistic.CYCLE` provider 필드는 SDK에서 `ReferenceTime`으로 노출합니다. 이 값은 주기 코드가 아니라 최신값 기준시점입니다.
+`KeyStatistic.CYCLE` provider 필드는 SDK에서 `ReferenceTime`으로 노출합니다. 이 값은 주기 코드가 아니라 최신값 기준시점입니다. 관심 지표의 과거 시계열은 `StatisticSearch`와 catalog logical indicator mapping으로 조회합니다.
 
 ## 개발
 
@@ -155,3 +155,4 @@ task docker:verify
 - 공식 인벤토리: `docs/apis/official-inventory.md`
 - OpenAPI 수집 계획: `docs/apis/openapi.md`
 - typed SDK 체크리스트: `docs/apis/typed-sdk-checklist.md`
+- 100대 통계지표 기반 ROI catalog와 drill-down 설계: `docs/apis/series-catalog.md`

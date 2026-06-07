@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/awuzag/ecos/catalog/schema/key-statistics-snapshot.schema.json",
+  "title": "ECOS KeyStatisticList snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "source", "summary", "key_statistics"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "collected_at", "format", "service"],
+      "properties": {
+        "provider": {
+          "const": "BOK ECOS"
+        },
+        "collected_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+        },
+        "format": {
+          "const": "json"
+        },
+        "service": {
+          "const": "KeyStatisticList"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key_statistic_total"],
+      "properties": {
+        "key_statistic_total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "key_statistics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/key_statistic"
+      }
+    }
+  },
+  "definitions": {
+    "key_statistic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class_name", "name", "value", "reference_time", "unit_name"],
+      "properties": {
+        "class_name": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string"
+        },
+        "reference_time": {
+          "type": "string"
+        },
+        "unit_name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

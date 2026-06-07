@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "source": {
+    "provider": "BOK ECOS",
+    "checked_at": "2026-06-07",
+    "format": "json",
+    "source_of_truth": "KeyStatisticList + targeted StatisticItemList/StatisticSearch mappings",
+    "notes": "High-ROI logical indicators. KeyStatisticList is the latest-value entry point; period mappings point to StatisticSearch drill-down calls."
+  },
+  "indicators": [
+    {
+      "id": "bok-base-rate",
+      "name_ko": "한국은행 기준금리",
+      "name_en": "Bank of Korea base rate",
+      "category": "monetary_policy",
+      "tags": [
+        "policy-rate",
+        "interest-rate"
+      ],
+      "key_statistic": {
+        "name_ko": "한국은행 기준금리",
+        "reference_time_semantics": "latest_value_reference_time"
+      },
+      "stat_code": "722Y001",
+      "item_codes": [
+        "0101000"
+      ],
+      "preferred_cycle": "M",
+      "available_cycles": [
+        "D",
+        "M",
+        "Q",
+        "A"
+      ],
+      "periods": [
+        {
+          "cycle": "D",
+          "series_key": "722Y001:D:0101000",
+          "start_time": "19990506",
+          "end_time": "20260601",
+          "data_count": 9888,
+          "unit_name": "연%",
+          "status": "queryable"
+        },
+        {
+          "cycle": "M",
+          "series_key": "722Y001:M:0101000",
+          "start_time": "199905",
+          "end_time": "202605",
+          "data_count": 325,
+          "unit_name": "연%",
+          "status": "queryable"
+        },
+        {
+          "cycle": "Q",
+          "series_key": "722Y001:Q:0101000",
+          "start_time": "1999Q2",
+          "end_time": "2026Q1",
+          "data_count": 108,
+          "unit_name": "연%",
+          "status": "queryable"
+        },
+        {
+          "cycle": "A",
+          "series_key": "722Y001:A:0101000",
+          "start_time": "1999",
+          "end_time": "2025",
+          "data_count": 27,
+          "unit_name": "연%",
+          "status": "queryable"
+        }
+      ],
+      "notes": "Alias ID는 cycle을 붙이지 않는 논리 지표명이다. 최신값은 KeyStatisticList에서 보고, 추세는 preferred_cycle 또는 명시 cycle의 StatisticSearch로 조회한다."
+    },
+    {
+      "id": "koribor-3m",
+      "name_ko": "KORIBOR 3개월",
+      "name_en": "KORIBOR 3-month",
+      "category": "market_rates",
+      "tags": [
+        "interest-rate",
+        "money-market"
+      ],
+      "key_statistic": {
+        "name_ko": "KORIBOR(3개월)",
+        "reference_time_semantics": "latest_value_reference_time"
+      },
+      "stat_code": "817Y002",
+      "item_codes": [
+        "010150000"
+      ],
+      "preferred_cycle": "D",
+      "available_cycles": [
+        "D"
+      ],
+      "periods": [
+        {
+          "cycle": "D",
+          "series_key": "817Y002:D:010150000",
+          "start_time": "20050801",
+          "end_time": "20260602",
+          "data_count": 5161,
+          "unit_name": "연%",
+          "status": "queryable"
+        }
+      ],
+      "notes": "단기자금시장 대표 지표다."
+    },
+    {
+      "id": "cd-91d",
+      "name_ko": "CD 91일",
+      "name_en": "CD 91-day yield",
+      "category": "market_rates",
+      "tags": [
+        "interest-rate",
+        "money-market"
+      ],
+      "key_statistic": {
+        "name_ko": "CD수익률(91일)",
+        "reference_time_semantics": "latest_value_reference_time"
+      },
+      "stat_code": "817Y002",
+      "item_codes": [
+        "010502000"
+      ],
+      "preferred_cycle": "D",
+      "available_cycles": [
+        "D"
+      ],
+      "periods": [
+        {
+          "cycle": "D",
+          "series_key": "817Y002:D:010502000",
+          "start_time": "19950103",
+          "end_time": "20260602",
+          "data_count": 7977,
+          "unit_name": "연%",
+          "status": "queryable"
+        }
+      ],
+      "notes": "신용과 단기금리 여건을 보는 고빈도 지표다."
+    },
+    {
+      "id": "kr-treasury-3y",
+      "name_ko": "국고채 3년",
+      "name_en": "Korea Treasury Bond 3-year yield",
+      "category": "market_rates",
+      "tags": [
+        "interest-rate",
+        "bond-yield"
+      ],
+      "key_statistic": {
+        "name_ko": "국고채수익률(3년)",
+        "reference_time_semantics": "latest_value_reference_time"
+      },
+      "stat_code": "817Y002",
+      "item_codes": [
+        "010200000"
+      ],
+      "preferred_cycle": "D",
+      "available_cycles": [
+        "D"
+      ],
+      "periods": [
+        {
+          "cycle": "D",
+          "series_key": "817Y002:D:010200000",
+          "start_time": "19981113",
+          "end_time": "20260602",
+          "data_count": 6827,
+          "unit_name": "연%",
+          "status": "queryable"
+        }
+      ],
+      "notes": "채권시장 대표 금리다."
+    },
+    {
+      "id": "m2-ending-balance",
+      "name_ko": "M2 말잔 원계열",
+      "name_en": "M2 end-of-period unadjusted",
+      "category": "monetary_aggregates",
+      "tags": [
+        "money-supply",
+        "m2"
+      ],
+      "key_statistic": {
+        "name_ko": "M2",
+        "reference_time_semantics": "latest_value_reference_time",
+        "notes": "KeyStatisticList의 M2와 이 mapping의 말잔/평잔 정의가 다를 수 있어 targeted 검증이 필요하다."
+      },
+      "stat_code": "161Y008",
+      "item_codes": [
+        "BBGA00"
+      ],
+      "preferred_cycle": "M",
+      "available_cycles": [
+        "M",
+        "Q",
+        "A"
+      ],
+      "periods": [
+        {
+          "cycle": "M",
+          "series_key": "161Y008:M:BBGA00",
+          "start_time": "200310",
+          "end_time": "202603",
+          "data_count": 270,
+          "unit_name": "십억원",
+          "status": "needs_review"
+        }
+      ],
+      "notes": "M2는 여러 정의가 있어 alias 이름에 말잔 원계열을 드러낸다."
+    },
+    {
+      "id": "usd-krw-close",
+      "name_ko": "원/달러 종가",
+      "name_en": "USD/KRW close",
+      "category": "exchange_rates",
+      "tags": [
+        "fx",
+        "usd-krw"
+      ],
+      "key_statistic": {
+        "name_ko": "원/달러 환율",
+        "reference_time_semantics": "latest_value_reference_time"
+      },
+      "stat_code": "731Y006",
+      "item_codes": [
+        "0000003",
+        "0000200"
+      ],
+      "preferred_cycle": "M",
+      "available_cycles": [
+        "M"
+      ],
+      "periods": [
+        {
+          "cycle": "M",
+          "series_key": "731Y006:M:0000003:0000200",
+          "status": "needs_review",
+          "notes": "다중 group table mapping이다. 자동 Cartesian product로 대량 생성하지 않고 targeted StatisticSearch smoke로 검증한 뒤 승격한다."
+        }
+      ],
+      "notes": "환율 table은 고시시점/매매기준율/종가 정의가 갈리므로 KeyStatisticList 이름만으로 확정하지 않는다."
+    },
+    {
+      "id": "cpi-headline",
+      "name_ko": "소비자물가지수 총지수",
+      "name_en": "Consumer price index headline",
+      "category": "prices",
+      "tags": [
+        "inflation",
+        "cpi"
+      ],
+      "key_statistic": {
+        "name_ko": "소비자물가지수",
+        "reference_time_semantics": "latest_value_reference_time"
+      },
+      "stat_code": "901Y009",
+      "item_codes": [
+        "0"
+      ],
+      "preferred_cycle": "M",
+      "available_cycles": [
+        "M"
+      ],
+      "periods": [
+        {
+          "cycle": "M",
+          "series_key": "901Y009:M:0",
+          "status": "needs_review",
+          "notes": "partial deep crawl에 포함되지 않은 mapping이다. targeted StatisticItemList와 StatisticSearch로 확인한 뒤 기간 정보를 채운다."
+        }
+      ],
+      "notes": "하위 품목이 매우 많으므로 catalog는 우선 총지수만 다룬다."
+    }
+  ]
+}

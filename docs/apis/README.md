@@ -9,6 +9,7 @@ ECOS 공식 문서 기준 API 목록은 새로 수집한다.
 - 전체 대응표: `docs/apis/typed-sdk-checklist.md`
 - 기준 인벤토리: `docs/apis/official-inventory.md`
 - 조사 노트: `docs/apis/ecos-openapi-research.md`
+- 100대 통계지표 기반 ROI catalog와 drill-down 설계: `docs/apis/series-catalog.md`
 - OpenAPI 생성 기준: `docs/apis/openapi.md`
 - SDK package: `github.com/awuzag/ecos`
 
