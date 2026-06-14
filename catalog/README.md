@@ -25,6 +25,8 @@ catalog/
 - `catalog/inventory/`는 shallow table snapshot과 targeted item snapshot을 둔다. 전체 `StatisticItemList` deep crawl을 기본 전제로 삼지 않는다.
 - `tmp/ecos-inventory-full.json` 같은 실험 산출물은 source of truth가 아니다.
 
+Inventory snapshot은 `source.scope`로 성격을 구분한다. 기본값은 `tables_and_key_statistics`이고, 관심 통계표 검증은 `targeted_items`, 넓은 item crawl 실험은 `experimental_full_items`다.
+
 ## Key format
 
 `series_key`는 `StatisticSearch` 호출에 필요한 provider mapping을 담는다.

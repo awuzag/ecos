@@ -13,7 +13,7 @@
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["provider", "collected_at", "format", "services"],
+      "required": ["provider", "collected_at", "format", "services", "scope"],
       "properties": {
         "provider": {
           "const": "BOK ECOS"
@@ -30,6 +30,18 @@
           "minItems": 1,
           "items": {
             "enum": ["StatisticTableList", "KeyStatisticList", "StatisticItemList"]
+          }
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["tables_and_key_statistics", "targeted_items", "experimental_full_items"]
+        },
+        "target_stat_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }

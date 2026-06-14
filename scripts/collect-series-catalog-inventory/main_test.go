@@ -87,7 +87,24 @@ func TestParseFlagsDefaultsToConservativeItemCollection(t *testing.T) {
 	opts := parseFlags(nil)
 
 	require.True(t, opts.includeKey)
+	require.False(t, opts.allowFullItems)
 	require.Equal(t, 1, opts.concurrency)
+}
+
+func TestValidateOptionsRequiresTargetForItemCollection(t *testing.T) {
+	err := validateOptions(options{includeItems: true, concurrency: 1})
+
+	require.ErrorContains(t, err, "include-items requires at least one -stat-code")
+}
+
+func TestValidateOptionsAllowsExplicitFullItemCrawl(t *testing.T) {
+	err := validateOptions(options{includeItems: true, allowFullItems: true, concurrency: 1})
+
+	require.NoError(t, err)
+}
+
+func TestNormalizedStatCodesSortsAndDeduplicates(t *testing.T) {
+	require.Equal(t, []string{"722Y001", "817Y002"}, normalizedStatCodes([]string{"817Y002", " 722Y001 ", "817Y002"}))
 }
 
 func TestItemCollectionTargetsRespectsStartAndLimit(t *testing.T) {

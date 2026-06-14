@@ -94,7 +94,7 @@ Cycle별 series를 별도 alias로 쪼개지 않고 하나의 경제 지표 아�
 
 1. 기본 수집: `StatisticTableList` + `KeyStatisticList`.
 2. 관심 지표 수집: `-include-items -stat-code ...`로 targeted `StatisticItemList`만 조회.
-3. 실험적 deep crawl: `-include-items`를 넓게 쓰되 낮은 동시성, sleep, limit, resume를 명시.
+3. 실험적 deep crawl: `-allow-full-item-crawl`을 명시하고 낮은 동시성, sleep, limit, resume를 함께 둔다.
 
 권장 실행:
 
@@ -104,7 +104,7 @@ go run ./scripts/collect-series-catalog-inventory -include-items -stat-code 722Y
 go run ./scripts/collect-series-catalog-inventory -include-items -stat-code 722Y001 -stat-code 817Y002 -concurrency 1 -sleep 500ms -out tmp/ecos-inventory-targeted-rates.json
 ```
 
-`-include-items`는 전체 searchable table deep crawl 권장이 아니다. target 없이 실행하면 searchable table 전체를 순회할 수 있으므로 ECOS rate limit과 낮은 ROI를 감수하는 실험으로 취급한다.
+`-include-items`는 전체 searchable table deep crawl 권장이 아니다. 기본적으로 하나 이상의 `-stat-code`가 필요하다. target 없이 전체를 순회하려면 `-allow-full-item-crawl`을 명시해야 하며, 이 출력은 `experimental_full_items` scope의 실험 산출물로만 취급한다.
 
 실험적 deep crawl을 할 때는 다음을 기본값으로 삼는다.
 
@@ -113,6 +113,16 @@ go run ./scripts/collect-series-catalog-inventory -include-items -stat-code 722Y
 - `-max-item-tables` 또는 반복 `-stat-code`로 범위 제한
 - 실패 후 `-start-stat-code`로 재개
 - 출력은 repo-local `tmp/...` 파일
+
+```sh
+go run ./scripts/collect-series-catalog-inventory -include-items -allow-full-item-crawl -concurrency 1 -sleep 500ms -max-item-tables 10 -out tmp/ecos-inventory-experimental-items.json
+```
+
+inventory snapshot의 `source.scope`는 다음처럼 해석한다.
+
+- `tables_and_key_statistics`: 얕은 table snapshot과 100대 통계지표 상태판.
+- `targeted_items`: 관심 통계표만 `StatisticItemList`로 확인한 drill-down 검증 산출물.
+- `experimental_full_items`: 전체 또는 넓은 범위 item crawl 실험 산출물. source of truth가 아니다.
 
 스크립트는 `--api-key`, `ECOS_API_KEY`, repo-local `.env` 순서로 키를 읽고 값은 출력하지 않는다. 자동 retry/backoff는 SDK 기본 동작에 넣지 않는다. `APIMSG002-602` 같은 제한은 collector 옵션과 운영 절차로 명시적으로 다룬다.
 

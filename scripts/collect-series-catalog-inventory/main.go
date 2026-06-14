@@ -24,6 +24,10 @@ const (
 	inventoryVersion = 1
 	sourceProvider   = "BOK ECOS"
 	sourceFormat     = "json"
+
+	inventoryScopeBase                  = "tables_and_key_statistics"
+	inventoryScopeTargetedItems         = "targeted_items"
+	inventoryScopeExperimentalFullItems = "experimental_full_items"
 )
 
 var groupCodePattern = regexp.MustCompile(`(?i)^group([1-4])$`)
@@ -39,6 +43,7 @@ type options struct {
 	targetStatCodes stringList
 	maxItemTables   int
 	startStatCode   string
+	allowFullItems  bool
 	concurrency     int
 	sleep           time.Duration
 }
@@ -54,10 +59,12 @@ type inventory struct {
 }
 
 type inventorySource struct {
-	Provider    string   `json:"provider"`
-	CollectedAt string   `json:"collected_at"`
-	Format      string   `json:"format"`
-	Services    []string `json:"services"`
+	Provider        string   `json:"provider"`
+	CollectedAt     string   `json:"collected_at"`
+	Format          string   `json:"format"`
+	Services        []string `json:"services"`
+	Scope           string   `json:"scope"`
+	TargetStatCodes []string `json:"target_stat_codes,omitempty"`
 }
 
 type inventorySummary struct {
@@ -190,6 +197,7 @@ func run(ctx context.Context, args []string, stdout io.Writer, stderr io.Writer)
 			CollectedAt: time.Now().UTC().Format(time.RFC3339),
 			Format:      sourceFormat,
 			Services:    []string{"StatisticTableList"},
+			Scope:       inventoryScopeBase,
 		},
 		Summary: inventorySummary{
 			TableTotal: total,
@@ -221,6 +229,11 @@ func run(ctx context.Context, args []string, stdout io.Writer, stderr io.Writer)
 
 	if opts.includeItems {
 		result.Source.Services = append(result.Source.Services, "StatisticItemList")
+		result.Source.Scope = inventoryScopeExperimentalFullItems
+		result.Source.TargetStatCodes = normalizedStatCodes(opts.targetStatCodes)
+		if len(result.Source.TargetStatCodes) > 0 {
+			result.Source.Scope = inventoryScopeTargetedItems
+		}
 		if err := applyResumeSnapshot(opts.outPath, opts.startStatCode, tables, &result); err != nil {
 			return err
 		}
@@ -248,6 +261,7 @@ func parseFlags(args []string) options {
 	flags.Var(&opts.targetStatCodes, "stat-code", "target StatisticItemList table code; repeatable")
 	flags.IntVar(&opts.maxItemTables, "max-item-tables", 0, "limit item collection to the first N targeted/searchable tables; 0 means no limit")
 	flags.StringVar(&opts.startStatCode, "start-stat-code", "", "resume targeted item collection at this searchable statistic table code")
+	flags.BoolVar(&opts.allowFullItems, "allow-full-item-crawl", false, "allow experimental full StatisticItemList crawl when -include-items has no -stat-code")
 	flags.IntVar(&opts.concurrency, "concurrency", 1, "number of concurrent StatisticItemList table collectors")
 	flags.DurationVar(&opts.sleep, "sleep", 250*time.Millisecond, "sleep duration between item table requests")
 	_ = flags.Parse(args)
@@ -260,7 +274,27 @@ func validateOptions(opts options) error {
 			With("field", "concurrency").
 			New("ecos: concurrency must be greater than zero")
 	}
+	if opts.includeItems && len(normalizedStatCodes(opts.targetStatCodes)) == 0 && !opts.allowFullItems {
+		return oops.In("collect_series_catalog_inventory").
+			With("field", "stat_code").
+			New("ecos: include-items requires at least one -stat-code; pass -allow-full-item-crawl for experimental full crawl")
+	}
 	return nil
+}
+
+func normalizedStatCodes(values []string) []string {
+	normalized := make([]string, 0, len(values))
+	seen := map[string]bool{}
+	for _, value := range values {
+		trimmed := strings.TrimSpace(value)
+		if trimmed == "" || seen[trimmed] {
+			continue
+		}
+		seen[trimmed] = true
+		normalized = append(normalized, trimmed)
+	}
+	sort.Strings(normalized)
+	return normalized
 }
 
 func collectTables(ctx context.Context, client *ecos.Client, pageSize int) ([]ecos.StatisticTable, int, error) {
